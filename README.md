@@ -27,6 +27,11 @@ docker exec notification_service_app alembic upgrade head
 ```
 
 
+Сгенерировать рандомные события
+```
+docker exec notification_service_app python generate_events.py
+```
+
 
 ### Документация API
 ```

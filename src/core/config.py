@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     echo: bool = False  # вывод операций с БД в логи
 
     class Config:
-        env_file = '.env'
+        env_file = '../.env'
         extra = 'ignore'
 
 

@@ -4,9 +4,9 @@ import time
 from pydantic import BaseModel
 
 
-class Event(BaseModel):
+class EventCreate(BaseModel):
     """Схема добавления нового события"""
     type: str
-    datetime: datetime.datetime
+    date: datetime.datetime
     urgent: bool
     payload: dict

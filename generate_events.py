@@ -1,5 +1,4 @@
 import random
-import time
 from datetime import datetime
 
 import faker
@@ -7,16 +6,15 @@ import requests
 
 faker = faker.Faker()
 
-
-NUMBER_OF_EVENTS = 50
-NOTIFICATION_SERVICE_URL = 'http://localhost:8000/api/v1/add_notification'
+NUMBER_OF_EVENTS = 100
+NOTIFICATION_SERVICE_URL = 'http://localhost:8000/api/v1/add_event'
 
 
 def generate_new_user_registration() -> dict:
     """Создание события регистрации нового пользователя"""
     event = {
         "type": "new_user",
-        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "urgent": True,
         "payload": {
             "user_id": faker.uuid4(),
@@ -29,7 +27,7 @@ def generate_new_series() -> dict:
     """Создание события выхода новой серии сериала"""
     event = {
         "type": "new_series",
-        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "urgent": True,
         "payload": {
             "film_id": faker.uuid4(),
@@ -42,7 +40,7 @@ def generate_new_like_for_review() -> dict:
     """Создание события добавления нового лайка на ревью"""
     event = {
         "type": "new_like_review",
-        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "urgent": False,
         "payload": {
             "user_id": faker.uuid4(),
@@ -57,7 +55,7 @@ def generate_news() -> dict:
     """Создание новостного события"""
     event = {
         "type": "news",
-        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "urgent": faker.boolean(),
         "payload": {
             "top_films": [faker.uuid4() for _ in range(5)],
@@ -87,5 +85,3 @@ if __name__ == "__main__":
         generate_random_event = random.choice(event_functions)
         event = generate_random_event()
         send_event(event)
-        # time.sleep(1)
-
