@@ -1,0 +1,7 @@
+pydantic~=2.8.2
+pydantic-settings==2.2.1
+fastapi~=0.112.0
+Faker~=26.2.0
+requests~=2.32.3
+uvicorn~=0.30.5
+orjson==3.10.3
