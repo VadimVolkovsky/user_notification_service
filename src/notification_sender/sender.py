@@ -3,7 +3,7 @@ from jinja2 import Template
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from email_sender.smtp_config import connect_to_smtp, sender_email
+from notification_sender.smtp_config import connect_to_smtp, sender_email
 from schemas.api_schemas import NotificationToSend
 
 
