@@ -6,6 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from src.db.postgres import Base
 
+# Новые модели необходимо импортировать в файле src/db/base.py чтобы алембик их увидел при миграциях
+
 
 class Event(Base):
     """Схема добавления нового события"""

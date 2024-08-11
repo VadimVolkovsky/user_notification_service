@@ -18,6 +18,9 @@ def generate_new_user_registration() -> dict:
         "urgent": True,
         "payload": {
             "user_id": faker.uuid4(),
+            "name": faker.name(),
+            "email": faker.email(),
+
         }
     }
     return event

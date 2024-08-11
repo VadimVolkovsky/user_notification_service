@@ -10,3 +10,8 @@ class EventCreate(BaseModel):
     date: datetime.datetime
     urgent: bool
     payload: dict
+
+
+class NotificationToSend(EventCreate):
+    """Схема готового к отправке уведомления"""
+    pass  # TODO дописать доп поля при необходимости
