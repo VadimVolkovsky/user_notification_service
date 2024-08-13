@@ -12,6 +12,12 @@ class EventCreate(BaseModel):
     payload: dict
 
 
-class NotificationToSend(EventCreate):
+class NotificationToSend(BaseModel):
     """Схема готового к отправке уведомления"""
-    pass  # TODO дописать доп поля при необходимости
+    type: str
+    subject: str
+    message: str
+    payload: list[dict]
+
+
+
