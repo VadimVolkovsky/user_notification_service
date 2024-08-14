@@ -47,17 +47,17 @@ services:
       - ./scheduler/src:/app
 #      - static_value:/opt/app/static/
 #      - media_value:/opt/app/media/
-#      - ./scheduler/src/static:/opt/app/static/
-#      - ./scheduler/src/media:/opt/app/media/
+      - ./scheduler/src/static:/opt/app/static/
+      - ./scheduler/src/media:/opt/app/media/
     container_name: notification_service_scheduler
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
 
   scheduler_nginx:
     image: nginx:1.19.2
     volumes:
       - ./scheduler/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./scheduler/nginx/configs:/etc/nginx/conf.d:ro
-#      - static_value:/var/html/static/
-#      - media_value:/var/html/media/
       - ./scheduler/src/static:/data/static
       - ./scheduler/src/media:/data/media
     depends_on:
