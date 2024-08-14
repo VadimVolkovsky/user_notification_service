@@ -5,7 +5,7 @@ from email.message import EmailMessage
 from jinja2 import FileSystemLoader, Environment
 
 from notification_sender.smtp_config import connect_to_smtp, sender_email
-from schemas.api_schemas import NotificationToSend, Recipient
+from schemas.api_schemas import NotificationToSend, Recipient, Context
 
 
 class NotificationSender:
@@ -69,33 +69,19 @@ class NotificationSender:
 notification_sender = NotificationSender()
 
 #
-# ### TODO DEBUG тест отправки сообщений:
+# # ### TODO DEBUG тест отправки сообщений:
+# recipient_1 = Recipient(
+#     id="01276bc8-84d9-4cb4-b574-9eea25a526f9",
+#     email='vadimas29@yandex.ru',
+#     name='Vadim'
+# )
+# context = Context(message='Добро пожаловать в онлайн кинотеатр Практикум')
 # notification_to_send_example_1 = NotificationToSend(
+#     title='Регистрация в Онлайн Кинотеатре',
 #     type='new_user',
-#     subject='Регистрация в Онлайн Кинотеатре',
-#     message='Добро пожаловать в онлайн кинотеатр Практикум',
-#     payload=[
-#         {
-#             'email': 'vadimas29@yandex.ru',
-#             'name': 'Vadim',
-#         }
-#     ]
+#     recipients=[recipient_1],
+#     context=context
 # )
-#
-# notification_to_send_example_2 = NotificationToSend(
-#     type='new_series',
-#     subject='Новая серия "Ходячие Мертвецы"',
-#     message='Привет, на платформе вышла новая серия',
-#     payload=[
-#         {
-#             'email': 'vadimas29@yandex.ru',
-#             'name': 'Ivan',
-#         },
-#         {
-#             'email': 'vadimas29@yandex.ru',
-#             'name': 'Dmitry',
-#         }
-#     ]
-# )
-#
-# notification_sender.send_notification(notification_to_send_example_1)
+# #
+
+# notification_sender.send_notification_by_email(notification_to_send_example_1)

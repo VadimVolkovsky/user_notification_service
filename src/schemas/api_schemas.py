@@ -6,14 +6,14 @@ from pydantic import BaseModel
 
 class Recipient(BaseModel):
     id: uuid.UUID
-    email: str | None
-    name: str | None
+    email: str = None
+    name: str = None
 
 
 class Context(BaseModel):
-    films_list: list | None  # список новых фильмов
-    episode_number = str | None  # номер новой серии
-    message: str | None  # сообщение для пользователя
+    films_list: list = None  # список новых фильмов
+    episode_number: int = None  # номер новой серии
+    message: str = None  # сообщение для пользователя
 
 
 class Notification(BaseModel):
