@@ -11,11 +11,12 @@ class Recipient(BaseModel):
 
 
 class Context(BaseModel):
-    films_list: list | None
-    message: str | None
+    films_list: list | None  # список новых фильмов
+    episode_number = str | None  # номер новой серии
+    message: str | None  # сообщение для пользователя
 
 
-class NotificationToSend(BaseModel):
+class Notification(BaseModel):
     """Схема отправки уведомления в API"""
     title: str
     type: str

@@ -43,7 +43,7 @@ class NotificationSender:
             for recipient in notification.recipients:
                 msgs.append(self._create_new_user_notification(recipient, notification))
         elif notification.type == 'new_series':
-            print('Уведомление о новых сериях пока не поддерживается')
+            print('Уведомление о новых сериях пока не поддерживается') # TODO
             pass
         return msgs
 
