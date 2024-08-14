@@ -17,7 +17,7 @@ class NotificationSender:
         email_data = {
             "subject": notification.title,
             "greeting": f"Привет {recipient.name} !",
-            "message": notification.context['message'],
+            "message": notification.context.message,
             "sender_name": "Онлайн Кинотеатр Практикум",
         }
 
