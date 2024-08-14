@@ -36,40 +36,40 @@ class NotificationSender:
         message.add_alternative(output, subtype='html')
         return message
 
-    def _prepare_email(self, notification: NotificationToSend) -> EmailMessage | None:
-        """Метод для подготовки email в зависимости от типа события"""
+    def _prepare_emails(self, notification: NotificationToSend) -> list[EmailMessage]:
+        """Метод для подготовки сообщений для отправки в зависимости от типа события"""
+        msgs = []
         if notification.type == 'new_user':
             for user in notification.payload:
-                return self._create_new_user_notification(user, notification)
+                msgs.append(self._create_new_user_notification(user, notification))
         elif notification.type == 'new_series':
+            print('Уведомление о новых сериях пока не поддерживается')
             pass
-        print('Уведомления для других типов событий еще не поддерживаются')
-        return
+        return msgs
 
     def send_notification(self, notification: NotificationToSend):
         """Отправка уведомления пользователю"""
-
-        msg = self._prepare_email(notification)
-        if not msg:
+        msgs = self._prepare_emails(notification)
+        if not msgs:
+            print('Нет сообщений для отправки')
             return
 
         # smtp_server = connect_to_smtp_debug()  # TODO для отладки в консоли
         smtp_server = connect_to_smtp()
-        try:
-            smtp_server.sendmail(sender_email, msg['To'], msg.as_string())
-        except smtplib.SMTPException as exc:
-            reason = f'{type(exc).__name__}: {exc}'
-            print(f'Не удалось отправить письмо. {reason}')
-        else:
-            print('Письмо отправлено!')
-        finally:
-            smtp_server.close()
+        for msg in msgs:
+            try:
+                smtp_server.sendmail(sender_email, msg['To'], msg.as_string())
+                print('Письмо отправлено!')
+            except smtplib.SMTPException as exc:
+                reason = f'{type(exc).__name__}: {exc}'
+                print(f'Не удалось отправить письмо. {reason}')
+        smtp_server.close()
 
 
 notification_sender = NotificationSender()
 
-
-### TODO DEBUG тест отправки сообщений:
+#
+# ### TODO DEBUG тест отправки сообщений:
 # notification_to_send_example_1 = NotificationToSend(
 #     type='new_user',
 #     subject='Регистрация в Онлайн Кинотеатре',
@@ -88,11 +88,11 @@ notification_sender = NotificationSender()
 #     message='Привет, на платформе вышла новая серия',
 #     payload=[
 #         {
-#             'email': 'user_1@mail.ru',
+#             'email': 'vadimas29@yandex.ru',
 #             'name': 'Ivan',
 #         },
 #         {
-#             'email': 'user_2@mail.ru',
+#             'email': 'vadimas29@yandex.ru',
 #             'name': 'Dmitry',
 #         }
 #     ]
