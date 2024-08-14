@@ -47,8 +47,8 @@ class NotificationSender:
             pass
         return msgs
 
-    def send_notification(self, notification: NotificationToSend):
-        """Отправка уведомления пользователю"""
+    def send_notification_by_email(self, notification: NotificationToSend):
+        """Отправка уведомления пользователю по email"""
         msgs = self._prepare_emails(notification)
         if not msgs:
             print('Нет сообщений для отправки')

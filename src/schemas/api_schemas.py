@@ -27,7 +27,7 @@ class Notification(BaseModel):
 
 
 class NotificationToSend(BaseModel):
-    """Схема отправки уведомления в сендер"""
+    """Схема отправки уведомления из воркера в сендер"""
     title: str
     type: str
     recipients: list[Recipient]
