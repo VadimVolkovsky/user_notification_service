@@ -12,12 +12,11 @@ class EventCreate(BaseModel):
     payload: dict
 
 
-class NotificationToSend(BaseModel):
-    """Схема готового к отправке уведомления"""
-    type: str
-    subject: str
-    message: str
-    payload: list[dict]
-
-
-
+class Notification(BaseModel):
+    """Схема отправки уведомления в API"""
+    title = str
+    type = str
+    channel = str
+    recipients = dict
+    created_at = datetime.datetime
+    context = dict

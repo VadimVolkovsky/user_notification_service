@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from src.api.v1.events import router as notification_router
+from src.api.v1.notifications import router as notification_router
 from src.core.config import settings
 from src.core.logger import LOGGING
 
