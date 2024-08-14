@@ -15,3 +15,5 @@ class Event(Base):
     date: Mapped[datetime.datetime]
     urgent: Mapped[bool] = mapped_column(Boolean)
     payload: Mapped[JSON] = mapped_column(JSON)
+
+
