@@ -1,18 +1,33 @@
 import datetime
+import uuid
 
 from pydantic import BaseModel
 
 
 class Recipient(BaseModel):
-    email: str
-    name: str
+    id: uuid.UUID
+    email: str | None
+    name: str | None
 
 
-class Notification(BaseModel):
+class Context(BaseModel):
+    films_list: list | None
+    message: str | None
+
+
+class NotificationToSend(BaseModel):
     """Схема отправки уведомления в API"""
     title: str
     type: str
     channel: str
     recipients: list[Recipient]
     created_at: datetime.datetime
-    context: dict
+    context: Context
+
+
+class NotificationToSend(BaseModel):
+    """Схема отправки уведомления в сендер"""
+    title: str
+    type: str
+    recipients: list[Recipient]
+    context: Context

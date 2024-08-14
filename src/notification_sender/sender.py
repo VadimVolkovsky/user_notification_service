@@ -5,14 +5,14 @@ from email.message import EmailMessage
 from jinja2 import FileSystemLoader, Environment
 
 from notification_sender.smtp_config import connect_to_smtp, sender_email
-from schemas.api_schemas import Notification, Recipient
+from schemas.api_schemas import NotificationToSend, Recipient
 
 
 class NotificationSender:
     """Класс для подготовки и отправки уведомления пользователю"""
 
     @staticmethod
-    def _create_new_user_notification(recipient: Recipient, notification: Notification) -> EmailMessage:
+    def _create_new_user_notification(recipient: Recipient, notification: NotificationToSend) -> EmailMessage:
         """Подготовка уведомления о регистрации нового пользователя"""
         email_data = {
             "subject": notification.title,
@@ -30,13 +30,13 @@ class NotificationSender:
         current_path = f'{os.path.dirname(__file__)}/templates'
         loader = FileSystemLoader(current_path)
         env = Environment(loader=loader)
-        template = env.get_template('email_template.html')
+        template = env.get_template(f'{notification.type}.html')
 
         output = template.render(**email_data)
         message.add_alternative(output, subtype='html')
         return message
 
-    def _prepare_emails(self, notification: Notification) -> list[EmailMessage]:
+    def _prepare_emails(self, notification: NotificationToSend) -> list[EmailMessage]:
         """Метод для подготовки сообщений для отправки в зависимости от типа события"""
         msgs = []
         if notification.type == 'new_user':
@@ -47,7 +47,7 @@ class NotificationSender:
             pass
         return msgs
 
-    def send_notification(self, notification: Notification):
+    def send_notification(self, notification: NotificationToSend):
         """Отправка уведомления пользователю"""
         msgs = self._prepare_emails(notification)
         if not msgs:
