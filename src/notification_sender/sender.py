@@ -5,25 +5,25 @@ from email.message import EmailMessage
 from jinja2 import FileSystemLoader, Environment
 
 from notification_sender.smtp_config import connect_to_smtp, sender_email
-from schemas.api_schemas import NotificationToSend
+from schemas.api_schemas import Notification, Recipient
 
 
 class NotificationSender:
     """Класс для подготовки и отправки уведомления пользователю"""
 
     @staticmethod
-    def _create_new_user_notification(user: dict, notification: NotificationToSend) -> EmailMessage:
+    def _create_new_user_notification(recipient: Recipient, notification: Notification) -> EmailMessage:
         """Подготовка уведомления о регистрации нового пользователя"""
         email_data = {
-            "subject": notification.subject,
-            "greeting": f"Привет {user['name']} !",
-            "message": notification.message,
+            "subject": notification.title,
+            "greeting": f"Привет {recipient.name} !",
+            "message": notification.context['message'],
             "sender_name": "Онлайн Кинотеатр Практикум",
         }
 
         message = EmailMessage()
         message['From'] = sender_email
-        message['To'] = user["email"]
+        message['To'] = recipient.email
         message['Subject'] = 'Привет!'
 
         # Указываем расположение шаблонов
@@ -36,18 +36,18 @@ class NotificationSender:
         message.add_alternative(output, subtype='html')
         return message
 
-    def _prepare_emails(self, notification: NotificationToSend) -> list[EmailMessage]:
+    def _prepare_emails(self, notification: Notification) -> list[EmailMessage]:
         """Метод для подготовки сообщений для отправки в зависимости от типа события"""
         msgs = []
         if notification.type == 'new_user':
-            for user in notification.payload:
-                msgs.append(self._create_new_user_notification(user, notification))
+            for recipient in notification.recipients:
+                msgs.append(self._create_new_user_notification(recipient, notification))
         elif notification.type == 'new_series':
             print('Уведомление о новых сериях пока не поддерживается')
             pass
         return msgs
 
-    def send_notification(self, notification: NotificationToSend):
+    def send_notification(self, notification: Notification):
         """Отправка уведомления пользователю"""
         msgs = self._prepare_emails(notification)
         if not msgs:
