@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Notification
 
+
 @admin.register(Notification)
 class NotificationTaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'type', 'user', 'created_at')
