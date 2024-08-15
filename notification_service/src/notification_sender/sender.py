@@ -5,7 +5,7 @@ from email.message import EmailMessage
 from jinja2 import FileSystemLoader, Environment
 
 from smtp_config import connect_to_smtp, sender_email, sender_name
-from src.schemas.api_schemas import NotificationToSend, Recipient
+from schemas.api_schemas import NotificationToSend, Recipient
 
 
 class NotificationSender:
