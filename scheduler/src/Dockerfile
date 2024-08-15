@@ -20,4 +20,4 @@ COPY ../.. /app
 CMD ["bash", "deploy.sh"]
 
 # Run Celery
-CMD ["celery", "-A", "celery", "worker", "--loglevel=info"]
+#CMD ["celery", "-A", "celery", "worker", "--loglevel=info"]

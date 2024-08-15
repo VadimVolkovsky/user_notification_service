@@ -73,6 +73,7 @@ services:
       context: ./scheduler/src
       dockerfile: Dockerfile
     container_name: celery_worker
+    command: celery -A celery worker --loglevel=info
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
     volumes:

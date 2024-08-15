@@ -5,7 +5,7 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_TASK_TRACK_STARTED = True  # запускает трекинг задач Celery
 
 # Планировщик задач
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'  # Celery настроен на использование планировщика из базы данных
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 CELERY_BROKER_TRANSPORT_OPTION = {'visibility_timeout': 3600}  # время ожидания видимости 1 час
 CELERY_RESULT_BACKEND = 'django-db'  # указание для django_celery_results куда записывать результат выполнения задач

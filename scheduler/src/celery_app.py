@@ -1,14 +1,14 @@
-from celery import Celery
 import os
 
+from celery import Celery
 from celery.schedules import crontab
 
-from scheduler.src.config.components.celery import CELERY_BROKER_URL
+from scheduler.src.config.components.celery_settings import CELERY_BROKER_URL
 
 # Установка переменной окружения для настройки Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'src.settings')
 # Создание экземпляра приложения Celery
-app = Celery('src.celery', broker=CELERY_BROKER_URL)
+app = Celery('src', broker=CELERY_BROKER_URL)
 # app.conf.broker_url = CELERY_BROKER_URL
 
 # app.config_from_object('celeryconfig')
@@ -28,4 +28,3 @@ app.conf.beat_schedule = {
 }
 
 app.conf.timezone = 'UTC'  # Укажите ваш часовой пояс, если он отличается
-

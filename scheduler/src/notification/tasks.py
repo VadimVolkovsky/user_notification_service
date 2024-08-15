@@ -3,7 +3,7 @@ import logging
 import requests
 from celery.schedules import crontab
 
-from scheduler.src.celery import app
+from scheduler.src.celery_app import app
 from scheduler.src.notification.evevt_manager import TaskManager
 from scheduler.src.notification.models import NotificationType, Chanel, NotificationTemplate, Notification
 from scheduler.src.notification.serializers import notification_serializer

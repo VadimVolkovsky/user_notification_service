@@ -33,6 +33,8 @@ flake8:
 test:
 	$(EXEC_CORE) pytest
 
+# Scheduler
+
 makemigrations:
 	$(DOCKER_COMPOSE) exec scheduler python3 manage.py makemigrations
 
@@ -41,6 +43,9 @@ migrate:
 
 createsuperuser:
 	$(DOCKER_COMPOSE) exec scheduler python3 manage.py createsuperuser
+
+flake8-scheduler:
+	$(DOCKER_COMPOSE) exec scheduler flake8
 
 # makemigrations_auth:
 # 	$(EXEC_CORE) alembic revision --autogenerate -m "$(NAME)"

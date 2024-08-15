@@ -12,7 +12,7 @@ include(
     'components/installed_apps.py',
     'components/middleware.py',
     'components/internationalization.py',
-    'components/celery.py',
+    'components/celery_settings.py',
 )
 
 
