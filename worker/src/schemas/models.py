@@ -1,13 +1,23 @@
-import datetime
-import uuid
-
 from pydantic import BaseModel
+import uuid
+import datetime
+
+
+class UserSettings(BaseModel):
+    """Настройки пользователя"""
+    id: uuid.UUID
+    allowed_email: bool
+    allowed_push: bool
+    time_zone: str
+
+    class Config:
+        from_attributes = True
 
 
 class Recipient(BaseModel):
-    id: str
-    email: str = None
-    name: str = None
+    id: uuid.UUID
+    email: str | None = None
+    name: str | None = None
 
 
 class Context(BaseModel):
@@ -30,5 +40,5 @@ class NotificationToSend(BaseModel):
     """Схема отправки уведомления из воркера в сендер"""
     title: str
     type: str
-    recipient: Recipient
+    recipient: Recipient # recipients: list[Recipient]
     context: Context

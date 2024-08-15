@@ -1,6 +1,6 @@
 import smtplib
 
-from notification_sender.config import settings
+from core.config import settings
 
 
 def connect_to_smtp():

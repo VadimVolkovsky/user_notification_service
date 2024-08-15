@@ -8,5 +8,65 @@ services:
       - ./.env
     ports:
       - "8000:8000"
-    command: uvicorn notification_service.src.main:app --reload --host 0.0.0.0 --port 8000
     container_name: 'notification_service_app'
+    depends_on:
+      rabbit:
+        condition: service_started
+
+  worker-app:
+    build:
+      dockerfile: ./worker/src/Dockerfile
+      context: .
+    restart: always
+    env_file:
+      - ./.env
+    expose:
+      - 8003
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16.0
+    expose:
+      - 5432
+    volumes:
+      - postgres_data_notification_service:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -p 5432" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    container_name: 'notification_service_postgres'
+
+  rabbit:
+    image: heidiks/rabbitmq-delayed-message-exchange:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: 'notification_rabbit'
+
+  fake_api_services:
+    build:
+      dockerfile: ./fake_api_other_services/src/Dockerfile
+      context: .
+    restart: always
+    env_file:
+      - ./.env
+    expose:
+      - 8002
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: 'mailhog'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres_data_notification_service:
