@@ -24,9 +24,10 @@ class MockService:
     def get_new_films(self) -> list[dict]:
         return self.generate_new_films()
 
-    def generate_new_episodes_of_series(self) -> list[dict]:
-        Faker.seed(0)
+    def get_new_episodes_of_series(self) -> list[dict]:
+        return self.generate_new_episodes_of_series()
 
+    def generate_new_episodes_of_series(self) -> list[dict]:
         series_list = []
         for _ in range(5):
             series = {
