@@ -10,3 +10,129 @@ services:
       - "8000:8000"
     command: uvicorn notification_service.src.main:app --reload --host 0.0.0.0 --port 8000
     container_name: 'notification_service_app'
+    networks:
+      - notification_network
+
+
+  postgres:
+    image: postgres:16.0
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data_notification_service:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -p 5432" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    container_name: 'notification_service_postgres'
+    networks:
+      - notification_network
+
+  scheduler:
+    build:
+      context: ./scheduler/src
+      dockerfile: Dockerfile
+    expose:
+      - "8001"
+#    ports:
+#      - "8001:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - notification_network
+    volumes:
+      - ./scheduler/src:/app
+#      - static_value:/opt/app/static/
+#      - media_value:/opt/app/media/
+      - ./scheduler/src/static:/opt/app/static/
+      - ./scheduler/src/media:/opt/app/media/
+    container_name: notification_service_scheduler
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  scheduler_nginx:
+    image: nginx:1.19.2
+    volumes:
+      - ./scheduler/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./scheduler/nginx/configs:/etc/nginx/conf.d:ro
+      - ./scheduler/src/static:/data/static
+      - ./scheduler/src/media:/data/media
+    depends_on:
+      - scheduler
+    ports:
+      - "8001:80"
+    networks:
+      - notification_network
+    container_name: notification_service_nginx
+
+  celery:
+    build:
+      context: ./scheduler/src
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: celery -A celery_app worker --loglevel=info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - ./scheduler/src:/scheduler/src
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - notification_network
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    ports:
+      - "6380:6379"
+    networks:
+      - notification_network
+
+  celery-beat:
+    build:
+      context: ./scheduler/src
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    command: celery -A celery_app beat --loglevel=info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - ./scheduler/src:/scheduler/src
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - notification_network
+#http://localhost:5555
+  flower:
+    image: mher/flower
+    command: celery -A celery flower --broker=redis://redis:6379/0
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery
+    networks:
+      - notification_network
+
+volumes:
+  postgres_data_notification_service:
+  static_value:
+  media_value:
+
+
+networks:
+  notification_network:
+    driver: bridge

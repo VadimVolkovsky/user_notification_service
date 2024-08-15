@@ -28,5 +28,16 @@ docker exec notification_service_app python generate_events.py
 
 ### Документация API
 ```
-http://localhost:8000/api/openapi
+http://127.0.0.1:8000/api/openapi
 ```
+
+### Админка
+```
+http://127.0.0.1:8001/admin/
+```
+
+Создание супер-юзера
+```
+make createsuperuser
+```
+
