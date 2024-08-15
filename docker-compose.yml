@@ -113,7 +113,19 @@ services:
       - postgres
     networks:
       - notification_network
-
+#http://localhost:5555
+  flower:
+    image: mher/flower
+    command: celery -A celery flower --broker=redis://redis:6379/0
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery
+    networks:
+      - notification_network
 
 volumes:
   postgres_data_notification_service:
