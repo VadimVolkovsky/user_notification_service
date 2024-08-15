@@ -25,7 +25,6 @@ smtp_port_debug = 25
 def connect_to_smtp():
     """Метод для подключения к SMTP серверу"""
     server = smtplib.SMTP_SSL(smtp_server, smtp_port)
-    # server.starttls()
     server.login(sender_login, sender_password)
     return server
 

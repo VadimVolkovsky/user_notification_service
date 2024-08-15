@@ -50,7 +50,7 @@ class NotificationSender:
             print('Нет сообщений для отправки')
             return
 
-        # smtp_server = connect_to_smtp_debug()  # TODO для отладки в консоли
+        # smtp_server = connect_to_smtp_debug()  ### для отладки в консоли
         smtp_server = connect_to_smtp()
         for msg in msgs:
             try:
@@ -65,7 +65,8 @@ class NotificationSender:
 notification_sender = NotificationSender()
 
 #
-# # ### TODO DEBUG тест отправки сообщений:
+#### TODO DEBUG тест отправки сообщений:
+### TODO Регистрация нового пользователя
 # recipient_1 = Recipient(
 #     id="01276bc8-84d9-4cb4-b574-9eea25a526f9",
 #     email='vadimas29@yandex.ru',
@@ -80,7 +81,7 @@ notification_sender = NotificationSender()
 # )
 # #
 
-
+# ### TODO Выход нового эпизода
 # recipient_1 = Recipient(
 #     id="01276bc8-84d9-4cb4-b574-9eea25a526f9",
 #     email='vadimas29@yandex.ru',

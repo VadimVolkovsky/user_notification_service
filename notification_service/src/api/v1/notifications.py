@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 
 from services.notification_service import NotificationService, get_notification_service
-from src.schemas.api_schemas import Notification
+from schemas.api_schemas import Notification
 
 router = APIRouter()
 

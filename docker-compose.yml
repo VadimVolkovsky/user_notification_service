@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      dockerfile: src/Dockerfile
+      dockerfile: notification_service/src/Dockerfile
       context: .
     restart: always
     env_file:
