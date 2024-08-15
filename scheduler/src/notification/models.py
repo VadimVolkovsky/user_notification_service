@@ -8,10 +8,10 @@ class Chanel(models.TextChoices):
 
 
 class NotificationType(models.TextChoices):
-    SIGN_UP = 'email', 'Email'
-    REVIEW_LIKE = 'sms', 'SMS'
-    NEW_FILM = 'new_film', 'Mew film'
-    NEW_EPISODE = 'new_episode', 'Mew episode'
+    SIGN_UP = 'sign_up', 'Sign up'
+    REVIEW_LIKE = 'review_like', 'Review like'
+    NEW_FILM = 'new_film', 'New film'
+    NEW_EPISODE = 'new_episode', 'New episode'
     BOOKMARKS = 'bookmarks', 'Bookmarks'
     INFO = 'info', 'Info'
 
