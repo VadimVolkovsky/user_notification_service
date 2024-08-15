@@ -4,7 +4,8 @@ from email.message import EmailMessage
 
 from jinja2 import FileSystemLoader, Environment
 
-from smtp_config import connect_to_smtp, sender_email, sender_name
+from notification_sender.config import settings
+from notification_sender.smtp import connect_to_smtp
 from schemas.api_schemas import NotificationToSend, Recipient
 
 
@@ -20,11 +21,11 @@ class NotificationSender:
         email_data = {
             "greeting": f"Привет {recipient.name} !",
             "message": notification.context.message,
-            "sender_name": sender_name,
+            "sender_name": settings.sender_name,
         }
 
         message = EmailMessage()
-        message['From'] = sender_email
+        message['From'] = settings.sender_email
         message['To'] = recipient.email
         message['Subject'] = notification.title
 
@@ -51,7 +52,7 @@ class NotificationSender:
         smtp_server = connect_to_smtp()
         for msg in msgs:
             try:
-                smtp_server.sendmail(sender_email, msg['To'], msg.as_string())
+                smtp_server.sendmail(settings.sender_email, msg['To'], msg.as_string())
                 print('Письмо отправлено!')
             except smtplib.SMTPException as exc:
                 reason = f'{type(exc).__name__}: {exc}'
@@ -78,7 +79,7 @@ notification_sender = NotificationSender()
 #     context=context
 # )
 # #
-
+#
 # ### TODO Выход нового эпизода
 # recipient_1 = Recipient(
 #     id="01276bc8-84d9-4cb4-b574-9eea25a526f9",
