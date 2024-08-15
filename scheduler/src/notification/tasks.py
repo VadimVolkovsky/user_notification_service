@@ -50,7 +50,7 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
             user_group = episode.pop('users')
             episode_number = episode.pop('episode_number')
             notif_type = NotificationType.NEW_SERIES.name
-            template = NotificationTemplate.objects.get(type=notif_type)
+            # template = NotificationTemplate.objects.get(type=notif_type)
             message = f'Вышел новый эпизод {episode_number}  сериала {episode['title']}'
 
             notification = Notification.objects.create(
@@ -64,12 +64,12 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
             notification_json = notification_serializer(notification)
 
             response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
-            logging.info(f'[GET_NEW FILM] Все ок {response.json}')
+            logging.info(f'[GET_NEW_EPISODE] Все ок {response.json}')
     except NotificationTemplate.DoesNotExist:
-        logging.error(f'[GET_NEW FILM] NotificationTemplate с типом {notif_type} не найден')
+        logging.error(f'[GET_NEW GET_NEW_EPISODE] NotificationTemplate с типом {notif_type} не найден')
         raise Exception('NotificationTemplate с типом  {notif_type} не найден')
     except Exception as e:
-        logging.error(f'[GET_NEW FILM] Видимо что-то случилось {e}')
+        logging.error(f'[GET_NEW GET_NEW_EPISODE] Видимо что-то случилось {e}')
         raise Exception(e)
 
 
