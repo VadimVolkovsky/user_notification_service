@@ -18,5 +18,13 @@ class TaskManager:
         new_episodes = service.get_new_episodes_of_series()
         return new_episodes
 
+    def get_users_subscribers(self, service: MockService = MockService()):
+        """
+        Предполагаем, что у профилей пользователей есть метод get_users_subscribers,
+        возвращающий список пользователей с активной рассылкой.
+        """
+        users = service.get_new_episodes_of_series()
+        return users
+
     def get_bookmarks(self, service: MockService = MockService()):
         pass

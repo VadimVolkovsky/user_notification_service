@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def task_get_new_films(task_manager: TaskManager = TaskManager()):
     try:
         new_movies = task_manager.get_new_films()
-        user_group = task_manager.get_users_subscribers()
+        recipients = task_manager.get_users_subscribers()
         notif_type = NotificationType.NEW_FILM.name
         template = NotificationTemplate.objects.get(type=notif_type)
 
@@ -25,13 +25,13 @@ def task_get_new_films(task_manager: TaskManager = TaskManager()):
             title="New films",
             type=NotificationType.NEW_FILM.name,
             channel=Chanel.EMAIL.name,
-            user_group=user_group,
-            template=template,
+            recipients=recipients,
+            # template=template,
             context=dict(film_list=new_movies)
         )
         notification_json = notification_serializer(notification)
 
-        response = requests.post('http://app:8000/api/v1/add_event', json=notification_json)
+        response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
         logging.info(f'[GET_NEW FILM] Все ок {response.json}')
     except NotificationTemplate.DoesNotExist:
         logging.error(f'[GET_NEW FILM] NotificationTemplate с типом  {notif_type} не найден')
@@ -63,7 +63,7 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
             )
             notification_json = notification_serializer(notification)
 
-            response = requests.post('http://app:8000/api/v1/add_event', json=notification_json)
+            response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
             logging.info(f'[GET_NEW FILM] Все ок {response.json}')
     except NotificationTemplate.DoesNotExist:
         logging.error(f'[GET_NEW FILM] NotificationTemplate с типом {notif_type} не найден')
