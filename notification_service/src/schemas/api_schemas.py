@@ -5,15 +5,15 @@ from pydantic import BaseModel
 
 
 class Recipient(BaseModel):
-    id: uuid.UUID
+    id: str
     email: str = None
     name: str = None
 
 
 class Context(BaseModel):
-    films_list: list = None  # список новых фильмов
-    episode_number: int = None  # номер новой серии
-    message: str = None  # сообщение для пользователя
+    films_list: list | None = None  # список новых фильмов
+    episode_number: int | None = None  # номер новой серии
+    message: str | None = None  # сообщение для пользователя
 
 
 class Notification(BaseModel):
