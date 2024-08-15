@@ -11,6 +11,7 @@ class NotificationType(models.TextChoices):
     SIGN_UP = 'email', 'Email'
     REVIEW_LIKE = 'sms', 'SMS'
     NEW_FILM = 'new_film', 'Mew film'
+    NEW_EPISODE = 'new_episode', 'Mew episode'
     BOOKMARKS = 'bookmarks', 'Bookmarks'
     INFO = 'info', 'Info'
 
