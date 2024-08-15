@@ -20,8 +20,7 @@ docker compose up -d
 ```
 
 
-(check)
- Сгенерировать рандомные события 
+Сгенерировать события new_user
 ```
 docker exec notification_service_app python generate_events.py
 ```
