@@ -6,5 +6,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'notification.apps.NotificationConfig',
-    'django_celery_beat'
+    'django_celery_beat',
+    'django_celery_results'
 ]

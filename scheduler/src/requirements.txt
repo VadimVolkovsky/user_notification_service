@@ -20,6 +20,7 @@ uWSGI==2.0.24
 requests==2.32.3
 fastapi-limiter==0.1.6
 django-celery-beat
+django_celery_results
 faker
 flake8==6.1.0
 flake8-string-format
