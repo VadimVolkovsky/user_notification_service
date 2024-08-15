@@ -13,3 +13,4 @@ psycopg2-binary==2.9.9
 faststream[rabbit]==0.5.17
 Jinja2~=3.1.4
 starlette~=0.37.2
+gunicorn==22.0.0

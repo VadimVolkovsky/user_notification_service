@@ -1,20 +1,11 @@
 import logging
-from contextlib import asynccontextmanager
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from api.v1.notifications import router as notification_router
+from api.v1.notifications import router as notification_router, rabbit_router
 from core.config import settings
 from core.logger import LOGGING
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # действия при старте сервера
-    yield
-    # действия при выключении сервера
 
 
 app = FastAPI(
@@ -23,10 +14,11 @@ app = FastAPI(
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
     default_response_class=ORJSONResponse,
-    lifespan=lifespan,
+    lifespan=rabbit_router.lifespan_context,
 )
 
 app.include_router(notification_router, prefix="/api/v1")
+app.include_router(rabbit_router)
 
 
 if __name__ == "__main__":

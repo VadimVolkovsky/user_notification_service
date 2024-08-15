@@ -1,12 +1,16 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
+from faststream.rabbit.fastapi import RabbitRouter
 
-from services.notification_service import NotificationService, get_notification_service
 from schemas.api_schemas import Notification
+from core.config import settings
 
 router = APIRouter()
 
+
+rabbit_router = RabbitRouter(
+    f"amqp://{settings.rabbit_user}:{settings.rabbit_password}@{settings.rabbit_host}:{settings.rabbit_port}/")
 
 @router.post(
     '/add_notification',
@@ -14,7 +18,6 @@ router = APIRouter()
 )
 async def add_notification(
         notification: Notification,
-        notification_service: NotificationService = Depends(get_notification_service),
 ):
     """Эндпоинт для добавления нового уведомления в очередь"""
-    return await notification_service.send_notification_to_queue(notification)
+    await rabbit_router.broker.publish(notification, "event")

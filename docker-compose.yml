@@ -10,8 +10,12 @@ services:
       - "8000:8000"
     command: uvicorn notification_service.src.main:app --reload --host 0.0.0.0 --port 8000
     container_name: 'notification_service_app'
+    depends_on:
+      rabbit:
+        condition: service_started
     networks:
       - notification_network
+
 
 
   postgres:
@@ -126,6 +130,53 @@ services:
       - celery
     networks:
       - notification_network
+
+  worker-app:
+    build:
+      dockerfile: ./worker/src/Dockerfile
+      context: .
+    restart: always
+    env_file:
+      - ./.env
+    expose:
+      - 8003
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - notification_network
+
+  rabbit:
+    image: heidiks/rabbitmq-delayed-message-exchange:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: 'notification_rabbit'
+    networks:
+      - notification_network
+
+  fake_api_services:
+    build:
+      dockerfile: ./fake_api_other_services/src/Dockerfile
+      context: .
+    restart: always
+    env_file:
+      - ./.env
+    expose:
+      - 8002
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: 'mailhog'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - notification_network
+
 
 volumes:
   postgres_data_notification_service:
