@@ -31,3 +31,9 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.title} | {self.type}'
+
+
+class UserSettings(models.Model):
+    allowed_email = models.BooleanField(default=True)
+    allowed_push = models.BooleanField(default=True)
+    time_zone = models.CharField(max_length=10)
