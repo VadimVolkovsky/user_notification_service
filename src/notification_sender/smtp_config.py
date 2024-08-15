@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# TODO создать settings
+
 ### PROD config ###
 smtp_server = os.getenv('SMTP_SERVER')
 smtp_port = int(os.getenv('SMTP_PORT'))
@@ -12,6 +14,7 @@ smtp_port = int(os.getenv('SMTP_PORT'))
 sender_login = os.getenv('SENDER_LOGIN')
 sender_email = os.getenv('SENDER_EMAIL')
 sender_password = os.getenv('SENDER_PASSWORD')
+sender_name = os.getenv('SENDER_NAME')
 
 
 ### DEBUG config (для локальной отладки) ###
