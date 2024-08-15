@@ -4,7 +4,7 @@ from datetime import datetime
 import faker
 import requests
 
-from notification_service.src.schemas.api_schemas import Recipient, Context
+from schemas.api_schemas import Recipient, Context
 
 faker = faker.Faker()
 
@@ -22,8 +22,6 @@ def generate_new_user_registration() -> dict:
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "context": Context(message='Добро пожаловать в онлайн кинотеатр').dict()
     }
-
-
     return event
 
 
