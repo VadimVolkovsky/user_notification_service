@@ -19,6 +19,11 @@ cp .env_example .env
 docker compose up -d
 ```
 
+Добавить delayed exchange
+```
+docker exec notification_rabbit rabbitmqadmin declare exchange name=exchange type=x-delayed-message arguments='{"x-delayed-type":"direct"}'
+```
+
 
 Сгенерировать события new_user
 ```
