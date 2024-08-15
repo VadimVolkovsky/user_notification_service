@@ -4,11 +4,8 @@ from email.message import EmailMessage
 
 from jinja2 import FileSystemLoader, Environment
 
-from notification_sender.smtp_config import connect_to_smtp, sender_email, sender_name
-from schemas.api_schemas import NotificationToSend, Recipient
-
-
-# TODO в генераторе эвентов настроить текст message для new_user
+from smtp_config import connect_to_smtp, sender_email, sender_name
+from src.schemas.api_schemas import NotificationToSend, Recipient
 
 
 class NotificationSender:
@@ -64,8 +61,9 @@ class NotificationSender:
 
 notification_sender = NotificationSender()
 
-#
+
 #### TODO DEBUG тест отправки сообщений:
+
 ### TODO Регистрация нового пользователя
 # recipient_1 = Recipient(
 #     id="01276bc8-84d9-4cb4-b574-9eea25a526f9",

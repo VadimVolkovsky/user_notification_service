@@ -9,6 +9,8 @@ faker = faker.Faker()
 NUMBER_OF_EVENTS = 100
 NOTIFICATION_SERVICE_URL = 'http://localhost:8000/api/v1/add_event'
 
+# TODO  настроить текст message для new_user
+# TODO переработать эвенты с учетом обновлений 15 авг
 
 def generate_new_user_registration() -> dict:
     """Создание события регистрации нового пользователя"""
