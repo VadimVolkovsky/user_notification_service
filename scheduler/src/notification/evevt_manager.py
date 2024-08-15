@@ -1,4 +1,4 @@
-from scheduler.src.notification.mock_service import MockService
+from notification.mock_service import MockService
 
 
 class TaskManager:

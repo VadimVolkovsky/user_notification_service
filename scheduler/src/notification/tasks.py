@@ -1,17 +1,19 @@
 import logging
 
 import requests
+from celery import shared_task
 from celery.schedules import crontab
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
-from scheduler.src.celery_app import app
-from scheduler.src.notification.evevt_manager import TaskManager
-from scheduler.src.notification.models import NotificationType, Chanel, NotificationTemplate, Notification
-from scheduler.src.notification.serializers import notification_serializer
+from celery_app import app
+from notification.evevt_manager import TaskManager
+from notification.models import NotificationType, Chanel, NotificationTemplate, Notification
+from notification.serializers import notification_serializer
 
 logger = logging.getLogger(__name__)
 
 
-@app.task
+@shared_task(name='new_films')
 def task_get_new_films(task_manager: TaskManager = TaskManager()):
     try:
         new_movies = task_manager.get_new_films()
@@ -39,7 +41,7 @@ def task_get_new_films(task_manager: TaskManager = TaskManager()):
         raise Exception(e)
 
 
-@app.task
+@shared_task(name='new_episodes')
 def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
     try:
         new_episodes = task_manager.get_new_episode_of_series()
@@ -71,7 +73,7 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
         raise Exception(e)
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def periodic_task_notification_new_movies(sender, **kwargs):
     sender.add_periodic_task(
         crontab(minute=0, hour=18, day_of_week='fri'),  # 18:00 по пятницам
@@ -80,11 +82,11 @@ def periodic_task_notification_new_movies(sender, **kwargs):
     )
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def periodic_task_notification_new_episodes(sender, **kwargs):
     sender.task_get_new_episodes_of_series(
         crontab(minute=0, hour=12),  # 12:00
-        task_get_new_films.s(),
+        task_get_new_episodes_of_series.s(),
         name='New episodes of series daily',
     )
 
