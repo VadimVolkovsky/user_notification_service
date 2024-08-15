@@ -6,8 +6,6 @@
 
 
 
-
-
 ### Запуск проекта
 
 
@@ -21,13 +19,8 @@ cp .env_example .env
 docker compose up -d
 ```
 
-Применить миграции alembic
-```
-docker exec notification_service_app alembic upgrade head
-```
 
-
-Сгенерировать рандомные события
+Сгенерировать события new_user
 ```
 docker exec notification_service_app python generate_events.py
 ```

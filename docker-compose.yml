@@ -1,14 +1,14 @@
 services:
   app:
     build:
-      dockerfile: src/Dockerfile
+      dockerfile: notification_service/src/Dockerfile
       context: .
     restart: always
     env_file:
       - ./.env
     ports:
       - "8000:8000"
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+    command: uvicorn notification_service.src.main:app --reload --host 0.0.0.0 --port 8000
     container_name: 'notification_service_app'
     networks:
       - notification_network

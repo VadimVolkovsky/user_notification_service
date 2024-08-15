@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
-from src.core.logger import LOGGING
+from core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
 
@@ -17,13 +17,6 @@ class Settings(BaseSettings):
     project_name: str = "notification_service"
     secret_key: str = ""
     app_port: int = 8000
-
-    postgres_host: str
-    postgres_port: int
-    postgres_db: str
-    postgres_user: str
-    postgres_password: str
-    echo: bool = False  # вывод операций с БД в логи
 
     class Config:
         env_file = '../.env'
