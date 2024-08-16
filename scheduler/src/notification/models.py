@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -34,6 +36,7 @@ class Notification(models.Model):
 
 
 class UserSettings(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     allowed_email = models.BooleanField(default=True)
     allowed_push = models.BooleanField(default=True)
     time_zone = models.CharField(max_length=10)
