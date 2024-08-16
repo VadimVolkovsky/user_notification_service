@@ -37,34 +37,45 @@ async def handle_event(
         user_service: UserSettingsService = Depends(get_user_setting_service),
 ):
     delay = Delay(user_service)
+    tz = {}
     if message.type == "new_user":
+        print(message)
         user_id = message.recipients[0].id
         await user_service.add_user(user_id, session)   # TODO удалить при наличии реальной бд
         user = await user_service.get_user(user_id, session)
 
         if user.allowed_email and message.channel == 'email':
-            await delay.notificate(user, message, queue_delayed_email, queue_urgent_email)
+            user_data = await user_service.get_user_info(user)
+            tz.update({user.time_zone: [user_data]})
+            await delay.notificate(tz, message, queue_delayed_email, queue_urgent_email)
 
-    elif message.type == "new_series":
+    elif message.type == "new_episode":
         for recipient in message.recipients:
             user = await user_service.get_user(recipient.id, session)
             if not user:
                 user = await user_service.add_user(recipient.id, session)   # TODO удалить при наличии реальной бд
+
             if user.allowed_email and message.channel == 'email':
-                await delay.notificate(user, message, queue_delayed_email, queue_urgent_email)
+                user_data = await user_service.get_user_info(user)
+                if user.time_zone not in tz.keys():
+                    tz.update({user.time_zone: [user_data]})
+                else:
+                    tz[user.time_zone].append(user_data)
+        if tz:
+            await delay.notificate(tz, message, queue_delayed_email, queue_urgent_email)
 
 
 class Delay:
     def __init__(self, user_service: UserSettingsService):
         self._user_service = user_service
 
-    async def notificate(self, user, message, queue_delayed, queue_urgent):
-        user_data = await self._user_service.get_user_info(user)
-        output = NotificationToSend(
-            recipient=user_data, title=message.title, type=message.type, context=message.context
-        )
-        if user_data and self._user_service.is_active(user.time_zone):
-            await broker.publish(output, queue=queue_urgent)
-        else:
-            delay = self._user_service.get_delay(user.time_zone)
-            await broker.publish(output, queue=queue_delayed, exchange=exchange_delayed, headers={"x-delay": delay})
+    async def notificate(self, tz, message, queue_delayed, queue_urgent):
+        for time_zone, users in tz.items():
+            output = NotificationToSend(
+                recipients=users, title=message.title, type=message.type, context=message.context
+            )
+            if self._user_service.is_active(time_zone):
+                await broker.publish(output, queue=queue_urgent)
+            else:
+                delay = self._user_service.get_delay(time_zone)
+                await broker.publish(output, queue=queue_delayed, exchange=exchange_delayed, headers={"x-delay": delay})
