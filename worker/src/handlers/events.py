@@ -1,4 +1,3 @@
-from notification_sender.sender import NotificationSender
 from schemas.models import (
     Notification,
     NotificationToSend
@@ -11,6 +10,7 @@ from db.postgres import get_session
 
 from faststream.rabbit import RabbitBroker
 from core.config import settings
+from notification_sender.sender import get_sender, NotificationSender
 
 broker = RabbitBroker(
     f"amqp://{settings.rabbit_user}:{settings.rabbit_password}@{settings.rabbit_host}:{settings.rabbit_port}/")
@@ -24,9 +24,9 @@ queue_urgent_email = RabbitQueue("urgent_email")
 @broker.subscriber(queue=queue_urgent_email)
 @broker.subscriber(queue=queue_delayed_email, exchange=exchange_delayed)
 async def handle_email_notification(
-        message: NotificationToSend
+        message: NotificationToSend,
+        sender: NotificationSender = Depends(get_sender)
 ):
-    sender = NotificationSender()
     sender.send_notification_by_email(message)
 
 
