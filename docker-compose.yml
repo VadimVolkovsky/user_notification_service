@@ -6,12 +6,12 @@ services:
     restart: always
     env_file:
       - ./.env
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     container_name: 'notification_service_app'
     depends_on:
       rabbit:
-        condition: service_started
+        condition: service_healthy
     networks:
       - notification_network
 
@@ -19,8 +19,8 @@ services:
 
   postgres:
     image: postgres:16.0
-    ports:
-      - "5435:5432"
+    expose:
+      - 5432
     volumes:
       - postgres_data_notification_service:/var/lib/postgresql/data/
     env_file:
@@ -140,7 +140,7 @@ services:
     expose:
       - 8003
     depends_on:
-      postgres:
+      rabbit:
         condition: service_healthy
     networks:
       - notification_network
@@ -150,12 +150,18 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    expose:
+      - 5672
     ports:
-      - "5672:5672"
       - "15672:15672"
     container_name: 'notification_rabbit'
     networks:
       - notification_network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
   fake_api_services:
     build:
@@ -172,8 +178,9 @@ services:
   mailhog:
     image: mailhog/mailhog
     container_name: 'mailhog'
+    expose:
+      - 1025
     ports:
-      - "1025:1025"
       - "8025:8025"
     networks:
       - notification_network
