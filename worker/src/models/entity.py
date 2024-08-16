@@ -9,7 +9,7 @@ from db.postgres import Base
 
 class UserSettings(Base):
     """Настройки пользователя"""
-    __tablename__ = 'user_settings'
+    __tablename__ = 'notification_usersettings'
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, unique=True, nullable=False)
     allowed_email: Mapped[bool] = mapped_column(Boolean, default=True)
     allowed_push: Mapped[bool] = mapped_column(Boolean, default=True)
