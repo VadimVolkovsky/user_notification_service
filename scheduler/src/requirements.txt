@@ -1,5 +1,5 @@
 asgiref==3.7.2
-Django==4.2.5
+Django==5.0
 django-debug-toolbar==4.3.0
 django-split-settings==1.2.0
 gunicorn==21.2.0
@@ -19,6 +19,7 @@ typing_extensions==4.9.0
 uWSGI==2.0.24
 requests==2.32.3
 fastapi-limiter==0.1.6
+celery[redis]
 django-celery-beat
 django_celery_results
 faker

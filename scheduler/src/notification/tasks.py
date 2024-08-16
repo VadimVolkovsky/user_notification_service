@@ -3,16 +3,17 @@ import logging
 import requests
 from celery import shared_task
 from celery.schedules import crontab
+from requests import HTTPError
 
 from celery_app import app
 from notification.evevt_manager import TaskManager
-from notification.models import NotificationType, Chanel, Notification
+from notification.models import NotificationType, Chanel, Notification, Status
 from notification.serializers import notification_serializer
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='new_films')
+@shared_task
 def task_get_new_films(task_manager: TaskManager = TaskManager()):
     try:
         new_movies = task_manager.get_new_films()
@@ -30,17 +31,25 @@ def task_get_new_films(task_manager: TaskManager = TaskManager()):
         )
         notification_json = notification_serializer(notification)
 
-        response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
-        logging.info(f'[GET_NEW FILM] Все ок {response.json}')
+        response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
+        response.raise_for_status()
+
+        logging.info(f'[GET_NEW_FILM] Все ок {response.json}')
+
     # except NotificationTemplate.DoesNotExist:
     #     logging.error(f'[GET_NEW FILM] NotificationTemplate с типом  {notif_type} не найден')
     #     raise Exception('NotificationTemplate с типом  {notif_type} не найден')
+    except HTTPError as e:
+        logging.error(f'[GET_NEW_FILM] При отправке произошла ошибка {e}')
+        notification.status = Status.ERROR.name
+        notification.save()
+        raise Exception(f'При отправке произошла ошибка {e}')
     except Exception as e:
         logging.error(f'[GET_NEW FILM] Видимо что-то случилось {e}')
-        raise Exception(e)
+        raise Exception(f'Видимо что-то случилось {e}')
 
 
-@shared_task(name='new_episodes')
+@shared_task
 def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
     try:
         new_episodes = task_manager.get_new_episode_of_series()
@@ -62,14 +71,50 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
             )
             notification_json = notification_serializer(notification)
 
-            response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
+            response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
+            response.raise_for_status()
+
             logging.info(f'[GET_NEW_EPISODE] Все ок {response.json}')
+
+            notification.status = Status.SENT.name
+            notification.save()
     # except NotificationTemplate.DoesNotExist:
     #     logging.error(f'[GET_NEW GET_NEW_EPISODE] NotificationTemplate с типом {notif_type} не найден')
     #     raise Exception('NotificationTemplate с типом  {notif_type} не найден')
+    except HTTPError as e:
+        logging.error(f'[GET_NEW_EPISODE] При отправке произошла ошибка {e}')
+        notification.status = Status.ERROR.name
+        notification.save()
+        raise Exception(f'При отправке произошла ошибка {e}')
     except Exception as e:
-        logging.error(f'[GET_NEW GET_NEW_EPISODE] Видимо что-то случилось {e}')
-        raise Exception(e)
+        logging.error(f'[GET_NEW_EPISODE] Видимо что-то случилось {e}')
+        raise Exception(f'Видимо что-то случилось {e}')
+
+
+@shared_task
+def task_send_admin_notification(notification_id: int):
+    try:
+        notification = Notification.objects.get(id=notification_id)
+        notification_json = notification_serializer(notification)
+
+        response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
+        response.raise_for_status()
+
+        logging.info(f'[ADMIN_NOTIFICATION] Все ок {response.json}')
+
+        notification.status = Status.SENT.name
+        notification.save()
+    except Notification.DoesNotExist:
+        logging.error(f'[ADMIN_NOTIFICATION] Notification с id {notification_id} не найден')
+        raise Exception('Notification с id {notification_id} не найден')
+    except HTTPError as e:
+        logging.error(f'[ADMIN_NOTIFICATION] При отправке произошла ошибка {e}')
+        notification.status = Status.ERROR.name
+        notification.save()
+        raise Exception(f'При отправке произошла ошибка {e}')
+    except Exception as e:
+        logging.error(f'[ADMIN_NOTIFICATION] Видимо что-то случилось {e}')
+        raise Exception(f'Видимо что-то случилось {e}')
 
 
 @app.on_after_finalize.connect
@@ -80,14 +125,7 @@ def periodic_task_notification_new_movies(sender, **kwargs):
         name='New movies friday evening',
     )
 
-# @app.on_after_finalize.connect
-# def periodic_task_notification_new_movies(sender, **kwargs):
-#     sender.add_periodic_task(
-#         crontab(minute='1'),  # 18:00 по пятницам
-#         task_get_new_films.s(),
-#         name='New movies friday evening',
-#     )
-#
+
 @app.on_after_finalize.connect
 def periodic_task_notification_new_episodes(sender, **kwargs):
     sender.add_periodic_task(
@@ -95,7 +133,6 @@ def periodic_task_notification_new_episodes(sender, **kwargs):
         task_get_new_episodes_of_series.s(),
         name='New episodes of series daily',
     )
-
 
 # schedule, created = CrontabSchedule.objects.get_or_create(hour=12, minute=0)
 #

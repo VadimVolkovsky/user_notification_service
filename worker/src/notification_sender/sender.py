@@ -7,8 +7,8 @@ from functools import lru_cache
 from jinja2 import FileSystemLoader, Environment
 
 from core.config import settings
-from notification_sender.smtp import connect_to_smtp, connect_to_smtp_debug
-from schemas.models import NotificationToSend
+from smtp import connect_to_smtp, connect_to_smtp_debug
+from ..schemas.models import NotificationToSend
 
 logger = logging.getLogger("__name__")
 
@@ -55,7 +55,7 @@ class NotificationSender:
             logger.info('Письмо отправлено!')
         except smtplib.SMTPException as exc:
             reason = f'{type(exc).__name__}: {exc}'
-            logger.info(f'Не удалось отправить письмо. {reason}')
+            logger.error(f'Не удалось отправить письмо. {reason}')
         smtp_server.close()
 
 
