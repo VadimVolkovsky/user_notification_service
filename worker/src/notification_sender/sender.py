@@ -6,8 +6,8 @@ from email.message import EmailMessage
 from jinja2 import FileSystemLoader, Environment
 
 from core.config import settings
-from notification_sender.smtp import connect_to_smtp, connect_to_smtp_debug
-from schemas.models import NotificationToSend
+from smtp import connect_to_smtp, connect_to_smtp_debug
+from ..schemas.models import NotificationToSend
 
 logger = logging.getLogger("__name__")
 

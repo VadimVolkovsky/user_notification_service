@@ -3,6 +3,7 @@ asyncpg==0.29.0
 pydantic~=2.8.2
 pydantic-settings==2.2.1
 fastapi~=0.112.0
+fastapi-jwt[authlib]==0.3.0
 Faker~=26.2.0
 requests~=2.32.3
 uvicorn~=0.30.5
