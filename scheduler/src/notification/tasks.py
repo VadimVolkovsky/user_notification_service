@@ -31,7 +31,7 @@ def task_get_new_films(task_manager: TaskManager = TaskManager()):
         )
         notification_json = notification_serializer(notification)
 
-        response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
+        response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
         response.raise_for_status()
 
         logging.info(f'[GET_NEW_FILM] Все ок {response.json}')
@@ -71,7 +71,7 @@ def task_get_new_episodes_of_series(task_manager: TaskManager = TaskManager()):
             )
             notification_json = notification_serializer(notification)
 
-            response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
+            response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
             response.raise_for_status()
 
             logging.info(f'[GET_NEW_EPISODE] Все ок {response.json}')
@@ -97,7 +97,7 @@ def task_send_admin_notification(notification_id: int):
         notification = Notification.objects.get(id=notification_id)
         notification_json = notification_serializer(notification)
 
-        response = requests.post('http://app:8000/api/v1/add_notification', json=notification_json)
+        response = requests.post('http://app:80/api/v1/add_notification', json=notification_json)
         response.raise_for_status()
 
         logging.info(f'[ADMIN_NOTIFICATION] Все ок {response.json}')
