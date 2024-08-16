@@ -50,10 +50,10 @@ services:
       - notification_network
     volumes:
       - ./scheduler/src:/app
-#      - static_value:/opt/app/static/
-#      - media_value:/opt/app/media/
-      - ./scheduler/src/static:/opt/app/static/
-      - ./scheduler/src/media:/opt/app/media/
+      - static_value:/opt/app/static/
+      - media_value:/opt/app/media/
+#      - ./scheduler/src/static:/opt/app/static/
+#      - ./scheduler/src/media:/opt/app/media/
     container_name: notification_service_scheduler
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -63,8 +63,8 @@ services:
     volumes:
       - ./scheduler/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./scheduler/nginx/configs:/etc/nginx/conf.d:ro
-      - ./scheduler/src/static:/data/static
-      - ./scheduler/src/media:/data/media
+      - static_value:/data/static
+      - media_value:/data/media
     depends_on:
       - scheduler
     ports:
@@ -78,7 +78,7 @@ services:
       context: ./scheduler/src
       dockerfile: Dockerfile
     container_name: celery_worker
-    command: celery -A celery_app worker --loglevel=info
+    command: celery -A celery_app worker --loglevel=DEBUG
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
     volumes:
@@ -104,7 +104,7 @@ services:
       context: ./scheduler/src
       dockerfile: Dockerfile
     container_name: celery_beat
-    command: celery -A celery_app beat --loglevel=info
+    command: celery -A celery_app beat --loglevel=DEBUG
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
     volumes:
@@ -116,6 +116,7 @@ services:
       - postgres
     networks:
       - notification_network
+
 #http://localhost:5555
   flower:
     image: mher/flower
