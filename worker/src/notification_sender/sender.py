@@ -54,7 +54,7 @@ class NotificationSender:
             logger.info('Письмо отправлено!')
         except smtplib.SMTPException as exc:
             reason = f'{type(exc).__name__}: {exc}'
-            logger.info(f'Не удалось отправить письмо. {reason}')
+            logger.error(f'Не удалось отправить письмо. {reason}')
         smtp_server.close()
 
 
