@@ -11,5 +11,4 @@ RUN  pip install --upgrade pip && pip install -r requirements.txt
 
 COPY ./worker/src .
 
-ENTRYPOINT ["gunicorn", "main:app", "--bind", "0.0.0.0:8003", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker"]
-
+ENTRYPOINT ["faststream", "run", "main:app"]

@@ -2,6 +2,7 @@ import os
 import logging
 import smtplib
 from email.message import EmailMessage
+from functools import lru_cache
 
 from jinja2 import FileSystemLoader, Environment
 
@@ -58,4 +59,6 @@ class NotificationSender:
         smtp_server.close()
 
 
-notification_sender = NotificationSender()
+@lru_cache()
+def get_sender() -> NotificationSender:
+    return NotificationSender()

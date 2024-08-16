@@ -1,6 +1,3 @@
-from faststream.rabbit import RabbitRouter
-
-from notification_sender.sender import NotificationSender
 from schemas.models import (
     Notification,
     NotificationToSend
@@ -10,26 +7,30 @@ from faststream import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from faststream.rabbit import RabbitExchange, ExchangeType, RabbitQueue
 from db.postgres import get_session
-from broker.rabbit import broker
 
+from faststream.rabbit import RabbitBroker
+from core.config import settings
+from notification_sender.sender import get_sender, NotificationSender
 
-router = RabbitRouter()
+broker = RabbitBroker(
+    f"amqp://{settings.rabbit_user}:{settings.rabbit_password}@{settings.rabbit_host}:{settings.rabbit_port}/")
+
 
 exchange_delayed = RabbitExchange("exchange", type=ExchangeType.X_DELAYED_MESSAGE, durable=True)
 queue_delayed_email = RabbitQueue("delayed_email")
 queue_urgent_email = RabbitQueue("urgent_email")
 
 
-@router.subscriber(queue=queue_urgent_email)
-@router.subscriber(queue=queue_delayed_email, exchange=exchange_delayed)
+@broker.subscriber(queue=queue_urgent_email)
+@broker.subscriber(queue=queue_delayed_email, exchange=exchange_delayed)
 async def handle_email_notification(
-        message: NotificationToSend
+        message: NotificationToSend,
+        sender: NotificationSender = Depends(get_sender)
 ):
-    sender = NotificationSender()
     sender.send_notification_by_email(message)
 
 
-@router.subscriber("event")
+@broker.subscriber("event")
 async def handle_event(
         message: Notification,
         session: AsyncSession = Depends(get_session),
@@ -67,5 +68,3 @@ class Delay:
         else:
             delay = self._user_service.get_delay(user.time_zone)
             await broker.publish(output, queue=queue_delayed, exchange=exchange_delayed, headers={"x-delay": delay})
-
-
