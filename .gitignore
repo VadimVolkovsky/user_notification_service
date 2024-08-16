@@ -23,3 +23,5 @@ venv.bak/
 # IDEs
 .idea/
 .vscode
+
+scheduler/src/static
