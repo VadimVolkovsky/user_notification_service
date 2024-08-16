@@ -17,7 +17,18 @@ class NotificationType(models.TextChoices):
 
 
 class NotificationTemplate(models.Model):
-    pass
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    template = models.TextField()
+
+    def __str__(self):
+        return f'{self.title}'
+
+
+class Status(models.TextChoices):
+    INITIAL = 'initial', 'Initial'
+    SENT = 'sent', 'Sent'
+    ERROR = 'error', 'Error'
 
 
 class Notification(models.Model):
@@ -28,6 +39,7 @@ class Notification(models.Model):
     template = models.ForeignKey(NotificationTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     context = models.JSONField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.INITIAL.name)
 
     def __str__(self):
         return f'{self.title} | {self.type}'

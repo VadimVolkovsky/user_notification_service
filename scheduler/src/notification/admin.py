@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Notification
 
-from tasks import task_send_admin_notification
+from notification.tasks import task_send_admin_notification
 
 
 @admin.register(Notification)
