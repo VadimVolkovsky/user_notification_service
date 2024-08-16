@@ -1,14 +1,14 @@
 import os
 
 from celery import Celery
+from django.conf import settings # NOQA
 
-from config.components.celery_settings import CELERY_BROKER_URL
 
 # Установка переменной окружения для настройки Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 # Создание экземпляра приложения Celery
-app = Celery('celery_app', broker=CELERY_BROKER_URL)
+app = Celery('celery_app', include=['notification.tasks'])
 
 # Загрузка настроек Django в Celery
 app.config_from_object('django.conf:settings', namespace="CELERY")
