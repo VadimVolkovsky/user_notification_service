@@ -40,5 +40,5 @@ class NotificationToSend(BaseModel):
     """Схема отправки уведомления из воркера в сендер"""
     title: str
     type: str
-    recipient: Recipient # recipients: list[Recipient]
+    recipients: list[Recipient]
     context: Context

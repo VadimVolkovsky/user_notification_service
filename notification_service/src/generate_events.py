@@ -8,8 +8,9 @@ from schemas.api_schemas import Recipient, Context
 
 faker = faker.Faker()
 
-NUMBER_OF_EVENTS = 1
-NOTIFICATION_SERVICE_URL = 'http://localhost:8000/api/v1/add_notification'
+NUMBER_OF_EVENTS = 4
+NOTIFICATION_SERVICE_URL = 'http://localhost:80/api/v1/add_notification'
+AUTH_URL = 'http://localhost:80/api/v1/auth?user_id=c2774279-0861-4b77-a59e-a54405977e30'
 
 
 def generate_new_user_registration() -> dict:
@@ -24,10 +25,25 @@ def generate_new_user_registration() -> dict:
     }
     return event
 
+def generate_new_series() -> dict:
+    """Создание события выхода новой серии сериала"""
+    event = {
+        "title": "Есть новая серия",
+        "type": "new_episode",
+        "channel": "email",
+        "recipients": [Recipient(id=faker.uuid4(), email=faker.email(), name=faker.name()).dict() for _ in range(3)],
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "context": Context(message='Не пропустите 8 серию сериала Пацаны').dict()
+    }
+    return event
+
 
 def send_event(event: dict):
     """Функция для отправки событий в API notification service"""
-    requests.post(NOTIFICATION_SERVICE_URL, json=event, timeout=20)
+    resp = requests.post(AUTH_URL)
+    token = resp.json()["access_token"]
+    headers = {"Authorization": f'Bearer {token}'}
+    requests.post(NOTIFICATION_SERVICE_URL, json=event, timeout=20, headers=headers)
     print(f'Отправлен event типа: {event.get("type")}')
 
 
@@ -36,6 +52,7 @@ if __name__ == "__main__":
 
     event_functions = [
         generate_new_user_registration,
+        generate_new_series
     ]
 
     for _ in range(NUMBER_OF_EVENTS):
